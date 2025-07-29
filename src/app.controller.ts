@@ -77,9 +77,7 @@ export class AppController {
 
   @Post('/delete')
   @ApiBody({ type: DeleteUserRequestDto })
-  DeleteUserRequestDto(
-    @Body() body: DeleteUserRequestDto,
-  ): DeleteUserResponseDto {
+  deteleUser(@Body() body: DeleteUserRequestDto): DeleteUserResponseDto {
     const checkAccess = this.appService.checkAccess(body.session_identifier);
     if (!checkAccess.boolean) {
       throw new HttpException(
