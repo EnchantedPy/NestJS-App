@@ -62,3 +62,41 @@ export class DeleteUserResponseDto {
   @ApiProperty()
   msg: string;
 }
+
+export class AdminLoginRequestDto {
+  @ApiProperty()
+  login: string;
+
+  @ApiProperty()
+  passwd: string;
+
+  @ApiProperty()
+  unique: string;
+}
+
+export class AdminLoginResponseDto {
+  @ApiProperty()
+  success: boolean;
+
+  @ApiProperty()
+  msg: string;
+
+  @ApiProperty()
+  uuid: UUID | null;
+}
+
+export class ListUsersRequestDto {
+  @ApiProperty()
+  uuid: UUID;
+}
+
+export class ListUserResponseDto {
+  @ApiProperty()
+  success: boolean;
+
+  @ApiProperty()
+  msg: string;
+
+  @ApiProperty()
+  users: object | null;
+}

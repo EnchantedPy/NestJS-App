@@ -9,6 +9,10 @@ import {
   RegisterResponseDto,
   DeleteUserRequestDto,
   DeleteUserResponseDto,
+  AdminLoginRequestDto,
+  AdminLoginResponseDto,
+  ListUsersRequestDto,
+  ListUserResponseDto,
 } from './app.dto';
 
 type UUID = string;
@@ -17,6 +21,10 @@ type UUID = string;
 export class AppService {
   private collection: Record<UUID, 0 | 1> = {};
   private users: Map<string, string> = new Map();
+  private adminLogin: string = 'King';
+  private adminPasswd: string = 'apple';
+  private adminUnique: string = 'linux';
+  private adminLoggedUuid: UUID | null;
 
   getHealthcheck(): object {
     return { status: 'healthy' };
@@ -59,6 +67,8 @@ export class AppService {
     const uuid = request.session_identifier;
     if (!(uuid in this.collection) || this.collection[uuid] == 0) {
       return { success: false };
+    } else if (this.adminLoggedUuid == uuid) {
+      this.adminLoggedUuid = null;
     }
     this.collection[uuid] = 0;
     return { success: true };
@@ -80,5 +90,33 @@ export class AppService {
       return { success: true, msg: 'User deleted' };
     }
     return { success: false, msg: 'Invalid login provided' };
+  }
+
+  loginAdmin(request: AdminLoginRequestDto): AdminLoginResponseDto {
+    const login = request.login;
+    const passwd = request.passwd;
+    const unique = request.unique;
+    if (
+      this.adminLogin == login &&
+      this.adminPasswd == passwd &&
+      this.adminUnique == unique
+    ) {
+      const uuid = this.getUuidString();
+      this.adminLoggedUuid = uuid;
+      return { success: true, msg: 'Access granted', uuid: uuid };
+    }
+    return { success: false, msg: 'Invalid credentials', uuid: null };
+  }
+
+  listUsers(request: ListUsersRequestDto): ListUserResponseDto {
+    const uuid = request.uuid;
+    if (!(this.adminLoggedUuid == uuid)) {
+      return { success: false, msg: 'Access denied', users: null };
+    }
+    return {
+      success: true,
+      msg: 'Success',
+      users: Object.fromEntries(this.users),
+    };
   }
 }
