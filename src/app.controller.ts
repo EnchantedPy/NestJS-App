@@ -3,26 +3,24 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiBody } from '@nestjs/swagger';
 import {
-  ExactRequestDto,
   LoginRequestDto,
   AccessResponseDto,
   LogoutRequestDto,
   LogoutResponseDto,
+  RegisterRequestDto,
+  RegisterResponseDto,
+  DeleteUserRequestDto,
+  DeleteUserResponseDto,
 } from './app.dto';
+import { PassThrough } from 'stream';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): object {
-    return this.appService.getHello();
-  }
-
-  @Post('/user/exact')
-  @ApiBody({ type: ExactRequestDto })
-  getExact(@Body() body: ExactRequestDto): object {
-    return this.appService.getExact(body.id);
+  getHealthcheck(): object {
+    return this.appService.getHealthcheck();
   }
 
   @Post('/login')
@@ -58,5 +56,42 @@ export class AppController {
       );
     }
     return logoutResponse;
+  }
+
+  @Post('/register')
+  @ApiBody({ type: RegisterRequestDto })
+  registerUser(@Body() body: RegisterRequestDto): RegisterResponseDto {
+    const registerResponse = this.appService.registerUser(body);
+    if (!registerResponse.success) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Error registering',
+          detail: registerResponse.msg,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    return registerResponse;
+  }
+
+  @Post('/delete')
+  @ApiBody({ type: DeleteUserRequestDto })
+  DeleteUserRequestDto(
+    @Body() body: DeleteUserRequestDto,
+  ): DeleteUserResponseDto {
+    const checkAccess = this.appService.checkAccess(body.session_identifier);
+    if (!checkAccess.boolean) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Error deleting account',
+          detail: 'Invalid session indentifier',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    const deleteResponse = this.appService.deleteUser(body);
+    return deleteResponse;
   }
 }

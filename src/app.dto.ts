@@ -2,11 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 type UUID = string;
 
-export class ExactRequestDto {
-  @ApiProperty({ example: 1 })
-  id: number;
-}
-
 export class LoginRequestDto {
   @ApiProperty({ example: 'guest' })
   login: string;
@@ -34,4 +29,36 @@ export class LogoutRequestDto {
 export class LogoutResponseDto {
   @ApiProperty()
   success: boolean | null;
+}
+
+export class RegisterRequestDto {
+  @ApiProperty({ example: 'guest' })
+  login: string;
+
+  @ApiProperty({ example: 'guest' })
+  passwd: string;
+}
+
+export class RegisterResponseDto {
+  @ApiProperty({ example: true })
+  success: boolean;
+
+  @ApiProperty({ example: 'Successfully registered' })
+  msg: string;
+}
+
+export class DeleteUserRequestDto {
+  @ApiProperty()
+  session_identifier: UUID;
+
+  @ApiProperty()
+  login: string;
+}
+
+export class DeleteUserResponseDto {
+  @ApiProperty()
+  success: boolean;
+
+  @ApiProperty()
+  msg: string;
 }
