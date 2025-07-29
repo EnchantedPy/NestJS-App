@@ -10,7 +10,6 @@ import {
   DeleteUserRequestDto,
   DeleteUserResponseDto,
 } from './app.dto';
-import { PassThrough } from 'stream';
 
 type UUID = string;
 

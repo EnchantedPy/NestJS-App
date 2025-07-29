@@ -12,7 +12,6 @@ import {
   DeleteUserRequestDto,
   DeleteUserResponseDto,
 } from './app.dto';
-import { PassThrough } from 'stream';
 
 @Controller()
 export class AppController {
